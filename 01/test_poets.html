@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>诗人雅集</title>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #opening-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        #opening-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #start-btn {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            padding: 20px 40px;
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: '楷体';
+            transition: all 0.3s ease;
+        }
+
+        #start-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        #main-scene {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: none;
+            background: #F5F5DC;
+        }
+
+        .poet {
+            position: absolute;
+            cursor: pointer;
+            width: 280px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .poet img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s;
+        }
+
+        .poet:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 调整后的品字形布局 */
+        #fan { 
+            left: 50%;
+            bottom: 15%;
+            transform: translateX(-50%);
+        }
+
+        #yang { 
+            left: 20%;
+            top: 25%;
+        }
+
+        #lei { 
+            right: 20%;
+            top: 25%;
+        }
+
+        /* 诗人视频容器 */
+        #poet-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #poet-video {
+            max-width: 80%;
+            max-height: 80vh;
+        }
+
+        /* 诗词显示 */
+        #poem-display {
+            position: fixed;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 101;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            font-family: '楷体';
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #poem-display .title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #8B4513;
+        }
+
+        #poem-display .content {
+            font-size: 24px;
+            line-height: 2;
+            color: #333;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <button id="start-btn">点击开始观看</button>
+
+    <div id="opening-container">
+        <video id="opening-video">
+            <source src="video/opening.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div id="main-scene">
+        <div class="poet" id="fan" onclick="playPoet('fan')">
+            <img src="images/fan.png" alt="范成大">
+        </div>
+        <div class="poet" id="yang" onclick="playPoet('yang')">
+            <img src="images/yang.png" alt="杨万里">
+        </div>
+        <div class="poet" id="lei" onclick="playPoet('lei')">
+            <img src="images/lei.png" alt="雷震">
+        </div>
+    </div>
+
+    <div id="poet-video-container" onclick="closePoetVideo()">
+        <video id="poet-video" controls onclick="event.stopPropagation()">
+            <source src="" type="video/mp4">
+        </video>
+    </div>
+
+    <div id="poem-display">
+        <div class="title"></div>
+        <div class="content"></div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const openingVideo = document.getElementById('opening-video');
+        const openingContainer = document.getElementById('opening-container');
+        const mainScene = document.getElementById('main-scene');
+        const poetVideoContainer = document.getElementById('poet-video-container');
+        const poetVideo = document.getElementById('poet-video');
+        const poemDisplay = document.getElementById('poem-display');
+
+        // 诗词数据
+        const poems = {
+            'fan': {
+                title: '《四时田园杂兴（其三十一）》—— 范成大',
+                content: '昼出耘田夜绩麻，村庄儿女各当家。\n童孙未解供耕织，也傍桑阴学种瓜。'
+            },
+            'yang': {
+                title: '《稚子弄冰》—— 杨万里',
+                content: '稚子金盆脱晓冰，彩丝穿取当银钲。\n敲成玉磬穿林响，忽作玻璃碎地声。'
+            },
+            'lei': {
+                title: '《村晚》—— 雷震',
+                content: '草满池塘水满陂，山衔落日浸寒漪。\n牧童归去横牛背，短笛无腔信口吹。'
+            }
+        };
+
+        // 点击开始按钮播放视频
+        startBtn.addEventListener('click', function() {
+            startBtn.style.display = 'none';
+            const playPromise = openingVideo.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("开场视频开始播放");
+                }).catch(error => {
+                    console.error("视频播放失败:", error);
+                    showMainScene();
+                });
+            }
+        });
+
+        // 视频结束时显示主场景
+        openingVideo.addEventListener('ended', function() {
+            showMainScene();
+        });
+
+        function showMainScene() {
+            openingContainer.style.display = 'none';
+            mainScene.style.display = 'block';
+        }
+
+        function playPoet(poetId) {
+            // 设置并播放视频
+            poetVideo.src = `video/${poetId}.mp4`;
+            poetVideoContainer.style.display = 'flex';
+            
+            // 显示诗词
+            const poem = poems[poetId];
+            poemDisplay.querySelector('.title').textContent = poem.title;
+            poemDisplay.querySelector('.content').textContent = poem.content;
+            poemDisplay.style.display = 'block';
+
+            // 播放视频
+            poetVideo.load();
+            poetVideo.play().catch(error => {
+                console.error("诗人视频播放失败:", error);
+            });
+        }
+
+        function closePoetVideo() {
+            poetVideoContainer.style.display = 'none';
+            poemDisplay.style.display = 'none';
+            poetVideo.pause();
+            poetVideo.src = '';
+        }
+
+        // 视频播放结束时关闭
+        poetVideo.addEventListener('ended', closePoetVideo);
+
+        // 确保视频加载
+        openingVideo.load();
+    </script>
+</body>
+</html>

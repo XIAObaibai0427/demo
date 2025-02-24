@@ -1,273 +1,394 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>诗人雅集</title>
+    <title>古诗卡牌消除游戏</title>
     <meta charset="UTF-8">
     <style>
-        body { 
+        * {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background: #000;
+            box-sizing: border-box;
         }
 
-        #video-container {
-            position: fixed;
+        body {
+            background: #F5F5DC;
+            font-family: '楷体', KaiTi, serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-header h1 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 20px;
+            align-items: center;
+        }
+
+        #bgmToggle {
+            padding: 8px 20px;
+            background: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        #bgmToggle:hover {
+            background: #654321;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(6, 150px);
+            grid-template-rows: repeat(4, 200px);
+            gap: 15px;
+            justify-content: center;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .card {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes fadeOut {
+            0% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+            100% { 
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+
+        .card.matched {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        .card-face {
+            position: absolute;
             width: 100%;
             height: 100%;
-            z-index: 2;
-            background: #000;
-            transition: opacity 1s;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        #opening-video {
+        .card-front {
+            background: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-front img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 10px;
         }
 
-        #start-btn {
+        .card-back {
+            background: url('images/card-back.png') center/cover;
+        }
+
+        .victory-screen {
+            display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 3;
-            padding: 15px 30px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .victory-screen h2 {
+            color: #8B4513;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .victory-screen p {
             font-size: 20px;
-            background: rgba(255, 255, 255, 0.8);
+            margin: 10px 0;
+        }
+
+        .victory-screen button {
+            margin-top: 25px;
+            padding: 12px 30px;
+            font-size: 20px;
+            background: #8B4513;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-family: '楷体';
+            transition: background 0.3s;
         }
 
-        #main-scene {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            display: none;
-            background: #F5F5DC;
-        }
-
-        .poet {
-            position: absolute;
-            cursor: pointer;
-            transition: all 0.5s ease;
-            width: 200px;
-            text-align: center;
-        }
-
-        .poet img {
-            width: 100%;
-            height: auto;
-            transition: transform 0.3s;
-        }
-
-        .poet:hover img {
-            transform: scale(1.1);
-        }
-
-        .poet.active img {
-            transform: scale(1.2);
-        }
-
-        #fan { left: 20%; top: 40%; }
-        #yang { left: 45%; top: 30%; }
-        #lei { left: 70%; top: 40%; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .poet {
-            opacity: 0;
-            animation: fadeIn 1s forwards;
-        }
-
-        #yang { animation-delay: 0.3s; }
-        #lei { animation-delay: 0.6s; }
-
-        /* 诗词显示样式 */
-        #poem-display {
-            position: fixed;
-            top: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-family: '楷体';
-            display: none;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        #poem-display .title {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #8B4513;
-        }
-
-        #poem-display .content {
-            font-size: 20px;
-            line-height: 1.8;
-            color: #333;
-            white-space: pre-line;
+        .victory-screen button:hover {
+            background: #654321;
         }
     </style>
 </head>
 <body>
-    <button id="start-btn">点击开始观看</button>
-
-    <!-- 诗词显示区域 -->
-    <div id="poem-display">
-        <div class="title"></div>
-        <div class="content"></div>
-    </div>
-
-    <div id="video-container">
-        <video id="opening-video" playsinline>
-            <source src="video/opening.mp4" type="video/mp4">
-        </video>
-    </div>
-
-    <div id="main-scene">
-        <div class="poet" id="fan">
-            <img src="images/fan.png" alt="范成大" onclick="playPoet('fan')">
+    <div class="game-container">
+        <div class="game-header">
+            <h1>古诗卡牌消除游戏</h1>
+            <div class="game-info">
+                <span class="moves">步数: 0</span>
+                <span class="timer">时间: 0:00</span>
+                <button id="bgmToggle" onclick="toggleBGM()">
+                    <span class="icon">🎵</span>
+                    <span class="text">音乐开/关</span>
+                </button>
+            </div>
         </div>
         
-        <div class="poet" id="yang">
-            <img src="images/yang.png" alt="杨万里" onclick="playPoet('yang')">
-        </div>
+        <div class="cards-container" id="cardsContainer"></div>
         
-        <div class="poet" id="lei">
-            <img src="images/lei.png" alt="雷震" onclick="playPoet('lei')">
+        <div class="victory-screen" id="victoryScreen">
+            <h2>恭喜通关！</h2>
+            <p>用时: <span id="finalTime">0:00</span></p>
+            <p>步数: <span id="finalMoves">0</span></p>
+            <button onclick="restartGame()">再来一局</button>
         </div>
     </div>
 
-    <audio id="fan-audio" src="audio/fan.mp3" preload="auto"></audio>
-    <audio id="yang-audio" src="audio/yang.mp3" preload="auto"></audio>
-    <audio id="lei-audio" src="audio/lei.mp3" preload="auto"></audio>
+    <audio id="bgMusic" loop>
+        <source src="audio/bgm.mp3" type="audio/mp3">
+    </audio>
+    <audio id="matchSound" src="audio/match.mp3"></audio>
+    <audio id="errorSound" src="audio/error.mp3"></audio>
+    <audio id="victorySound" src="audio/victory.mp3"></audio>
 
     <script>
-        let currentAudio = null;
-        const startBtn = document.getElementById('start-btn');
-        const video = document.getElementById('opening-video');
-        const videoContainer = document.getElementById('video-container');
-        const mainScene = document.getElementById('main-scene');
-
-        // 诗词数据
-        const poems = {
-            'fan': {
-                title: '《四时田园杂兴（其三十一）》—— 范成大',
-                content: '昼出耘田夜绩麻，村庄儿女各当家。\n童孙未解供耕织，也傍桑阴学种瓜。'
-            },
-            'yang': {
-                title: '《稚子弄冰》—— 杨万里',
-                content: '稚子金盆脱晓冰，彩丝穿取当银钲。\n敲成玉磬穿林响，忽作玻璃碎地声。'
-            },
-            'lei': {
-                title: '《村晚》—— 雷震',
-                content: '草满池塘水满陂，山衔落日浸寒漪。\n牧童归去横牛背，短笛无腔信口吹。'
-            }
-        };
-
-        // 检查视频加载
-        video.addEventListener('loadeddata', () => {
-            console.log('视频已加载完成');
-        });
-
-        video.addEventListener('error', (e) => {
-            console.error('视频加载错误:', video.error);
-            showMainScene();
-        });
-
-        // 开始按钮点击事件
-        startBtn.addEventListener('click', async () => {
-            startBtn.style.display = 'none';
-            try {
-                video.load();
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('视频开始播放');
-                    }).catch(error => {
-                        console.error('视频播放失败:', error);
-                        showMainScene();
-                    });
+        class Game {
+            static poems = [
+                {
+                    title: '四时田园杂兴（其三十一）',
+                    author: '范成大',
+                    lines: ["昼出耘田夜绩麻", "村庄儿女各当家", "童孙未解供耕织", "也傍桑阴学种瓜"]
+                },
+                {
+                    title: '稚子弄冰',
+                    author: '杨万里',
+                    lines: ["稚子金盆脱晓冰", "彩丝穿取当银钲", "敲成玉磬穿林响", "忽作玻璃碎地声"]
+                },
+                {
+                    title: '村晚',
+                    author: '雷震',
+                    lines: ["草满池塘水满陂", "山衔落日浸寒漪", "牧童归去横牛背", "短笛无腔信口吹"]
+                },
+                {
+                    title: '从军行',
+                    author: '王昌龄',
+                    lines: ["青海长云暗雪山", "孤城遥望玉门关", "黄沙百战穿金甲", "不破楼兰终不还"]
+                },
+                {
+                    title: '秋夜将晓出篱门迎凉有感',
+                    author: '陆游',
+                    lines: ["三万里河东入海", "五千仞岳上摩天", "遗民泪尽胡尘里", "南望王师又一年"]
+                },
+                {
+                    title: '乡村四月',
+                    author: '翁卷',
+                    lines: ["绿遍山原白满川", "子规声里雨如烟", "乡村四月闲人少", "才了蚕桑又插田"]
                 }
-            } catch (error) {
-                console.error('播放出错:', error);
-                showMainScene();
+            ];
+
+            static cards = [];
+            static flippedCards = [];
+            static isLocked = false;
+            static matchedPairs = 0;
+            static moves = 0;
+
+            static init() {
+                const container = document.getElementById('cardsContainer');
+                container.innerHTML = '';
+                this.cards = [];
+                this.flippedCards = [];
+                this.isLocked = false;
+                this.matchedPairs = 0;
+                this.moves = 0;
+                document.querySelector('.moves').textContent = '步数: 0';
+
+                let cardData = [];
+                let cardId = 0;
+                this.poems.forEach(poem => {
+                    poem.lines.forEach(line => {
+                        cardData.push({
+                            id: cardId++,
+                            content: line,
+                            title: poem.title,
+                            author: poem.author
+                        });
+                    });
+                });
+
+                cardData = this.shuffleArray(cardData);
+
+                cardData.forEach(data => {
+                    const card = this.createCard(data);
+                    this.cards.push(card);
+                    container.appendChild(card);
+                });
+
+                this.startTimer();
             }
-        });
 
-        // 视频结束事件
-        video.addEventListener('ended', () => {
-            console.log('视频播放结束');
-            showMainScene();
-        });
+            static createCard(data) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-face card-front">
+                        <img src="images/${data.id + 1}.png" alt="${data.content}">
+                    </div>
+                    <div class="card-face card-back"></div>
+                `;
 
-        function showMainScene() {
-            videoContainer.style.opacity = '0';
-            mainScene.style.display = 'block';
-            
-            setTimeout(() => {
-                videoContainer.style.display = 'none';
-            }, 1000);
-        }
-
-        function playPoet(poetId) {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                document.querySelectorAll('.poet').forEach(p => p.classList.remove('active'));
-                hidePoemDisplay();
+                card.addEventListener('click', () => this.handleCardClick(card, data));
+                return card;
             }
 
-            const audio = document.getElementById(poetId + '-audio');
-            const poet = document.getElementById(poetId);
+            static handleCardClick(card, data) {
+                if (this.isLocked || card.classList.contains('flipped') || 
+                    this.flippedCards.length === 2) return;
 
-            if (currentAudio === audio) {
-                currentAudio = null;
-                hidePoemDisplay();
-                return;
+                card.classList.add('flipped');
+                this.flippedCards.push({card, data});
+
+                if (this.flippedCards.length === 2) {
+                    this.moves++;
+                    document.querySelector('.moves').textContent = `步数: ${this.moves}`;
+                    this.checkMatch();
+                }
             }
 
-            // 显示诗词
-            showPoemDisplay(poems[poetId]);
+            static checkMatch() {
+                this.isLocked = true;
+                const [first, second] = this.flippedCards;
+                
+                const isMatch = Math.abs(first.data.id - second.data.id) === 1 && 
+                              Math.floor(first.data.id / 2) === Math.floor(second.data.id / 2);
 
-            audio.play().catch(error => {
-                console.error('音频播放失败:', error);
-            });
-            currentAudio = audio;
-            poet.classList.add('active');
+                if (isMatch) {
+                    document.getElementById('matchSound').play();
+                    first.card.classList.add('matched');
+                    second.card.classList.add('matched');
+                    this.matchedPairs++;
 
-            audio.onended = function() {
-                poet.classList.remove('active');
-                currentAudio = null;
-                hidePoemDisplay();
-            };
+                    if (this.matchedPairs === 12) {
+                        setTimeout(() => this.victory(), 600);
+                    }
+                } else {
+                    document.getElementById('errorSound').play();
+                    setTimeout(() => {
+                        first.card.classList.remove('flipped');
+                        second.card.classList.remove('flipped');
+                    }, 1000);
+                }
+
+                setTimeout(() => {
+                    this.flippedCards = [];
+                    this.isLocked = false;
+                }, isMatch ? 600 : 1000);
+            }
+
+            static startTimer() {
+                this.startTime = Date.now();
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+                this.timerInterval = setInterval(() => {
+                    const time = Math.floor((Date.now() - this.startTime) / 1000);
+                    const minutes = Math.floor(time / 60);
+                    const seconds = time % 60;
+                    document.querySelector('.timer').textContent = 
+                        `时间: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            static victory() {
+                clearInterval(this.timerInterval);
+                document.getElementById('victorySound').play();
+                const finalTime = document.querySelector('.timer').textContent.split(': ')[1];
+                document.getElementById('finalTime').textContent = finalTime;
+                document.getElementById('finalMoves').textContent = this.moves;
+                document.getElementById('victoryScreen').style.display = 'block';
+            }
+
+            static shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
         }
 
-        // 显示诗词
-        function showPoemDisplay(poem) {
-            const display = document.getElementById('poem-display');
-            display.querySelector('.title').textContent = poem.title;
-            display.querySelector('.content').textContent = poem.content;
-            display.style.display = 'block';
+        const bgMusic = document.getElementById('bgMusic');
+        const bgmToggle = document.getElementById('bgmToggle');
+        let isBGMPlaying = false;
+
+        function toggleBGM() {
+            if (isBGMPlaying) {
+                bgMusic.pause();
+                bgmToggle.querySelector('.icon').textContent = '🔇';
+            } else {
+                bgMusic.play();
+                bgmToggle.querySelector('.icon').textContent = '🎵';
+            }
+            isBGMPlaying = !isBGMPlaying;
         }
 
-        // 隐藏诗词
-        function hidePoemDisplay() {
-            const display = document.getElementById('poem-display');
-            display.style.display = 'none';
+        function restartGame() {
+            document.getElementById('victoryScreen').style.display = 'none';
+            Game.init();
         }
 
-        // 预加载视频
-        video.load();
+        Game.init();
     </script>
 </body>
 </html>
