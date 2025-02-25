@@ -1,0 +1,227 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF);
+    font-family: '楷体', KaiTi, serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: background 3s;
+}
+
+/* 昼夜渐变效果 */
+body.evening {
+    background: linear-gradient(180deg, #FF7F50, #4169E1);
+}
+
+body.night {
+    background: linear-gradient(180deg, #191970, #000033);
+}
+
+.game-container {
+    max-width: 1200px;
+    width: 100%;
+    height: 800px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    padding: 20px;
+}
+
+.game-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+    font-size: 24px;
+    gap: 20px;
+}
+
+.timer {
+    color: white;
+    font-size: 24px;
+}
+
+/* 游戏说明弹窗样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+.intro-text {
+    color: #333;
+    font-size: 20px;
+    line-height: 1.8;
+    margin: 20px 0;
+}
+
+.intro-text p {
+    margin: 10px 0;
+}
+
+.countdown {
+    font-size: 36px;
+    color: #4169E1;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* 海域区域样式 */
+.sea-area {
+    height: 60%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 词语样式 */
+.word {
+    position: absolute;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: float 3s infinite ease-in-out;
+}
+
+/* 词语的三种样式 */
+.word.shell {
+    background: linear-gradient(45deg, #FFE4C4, #FFDAB9);
+    box-shadow: 0 2px 8px rgba(255, 218, 185, 0.5);
+}
+
+.word.turtle {
+    background: linear-gradient(45deg, #90EE90, #98FB98);
+    box-shadow: 0 2px 8px rgba(144, 238, 144, 0.5);
+}
+
+.word.bamboo {
+    background: linear-gradient(45deg, #DEB887, #D2B48C);
+    box-shadow: 0 2px 8px rgba(222, 184, 135, 0.5);
+}
+
+.word:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 网兜中的词语样式 */
+.net-slot .word {
+    position: static;
+    margin: auto;
+    transform: none;
+    animation: none;
+}
+
+/* 渔网区域样式 */
+.net-area {
+    height: 30%;
+    margin-top: 20px;
+}
+
+.net-slots {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.net-slot {
+    width: 180px;
+    height: 100px;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+/* 诗句展示区样式 */
+.poem-display {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    animation: fadeIn 0.5s;
+}
+
+.poem-info {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* 按钮样式 */
+.skip-btn, .start-btn {
+    padding: 12px 30px;
+    font-size: 20px;
+    background: #4169E1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.skip-btn:hover, .start-btn:hover {
+    background: #1E90FF;
+}
+
+/* 动画效果 */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* 通用样式 */
+.hidden {
+    display: none !important;
+}

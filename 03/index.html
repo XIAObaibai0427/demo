@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>诗海拾贝</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 游戏说明弹窗 -->
+    <div class="modal game-intro" id="gameIntro" style="display: none;">
+        <div class="modal-content">
+            <h2>诗海拾贝·玩法说明</h2>
+            <div class="intro-text">
+                <p>1. 点击上方海域中的词语，将其收集到下方渔网中</p>
+                <p>2. 需要先清除上层词语才能点击到下层词语</p>
+                <p>3. 当渔网中任意三个词语能组成诗句时自动消除</p>
+                <p>4. 当渔网填满五个词语却无法组成诗句时游戏结束</p>
+                <p>5. 成功组成完整诗句可以获得诗词介绍</p>
+            </div>
+            <div class="countdown">60</div>
+            <div class="button-group">
+                <button class="skip-btn">跳过</button>
+                <button class="start-btn" style="display: none;">开始游戏</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <div class="score">分数：<span id="score">0</span></div>
+        </div>
+
+        <!-- 海域区域：词语漂浮区 -->
+        <div class="sea-area" id="seaArea">
+            <!-- 词语会动态生成在这里 -->
+        </div>
+
+        <!-- 渔网区域：收集词语区 -->
+        <div class="net-area">
+            <div class="net-slots">
+                <div class="net-slot" data-index="0"></div>
+                <div class="net-slot" data-index="1"></div>
+                <div class="net-slot" data-index="2"></div>
+                <div class="net-slot" data-index="3"></div>
+                <div class="net-slot" data-index="4"></div>
+            </div>
+        </div>
+
+        <!-- 诗句展示区 -->
+        <div class="poem-display hidden">
+            <div class="poem-content"></div>
+            <div class="poem-info"></div>
+        </div>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div class="modal game-over" id="gameOver" style="display: none;">
+        <div class="modal-content">
+            <h2>江郎才尽</h2>
+            <p>最终得分：<span id="finalScore">0</span></p>
+            <button onclick="game.restart()">重新开始</button>
+        </div>
+    </div>
+
+    <!-- 音频资源 -->
+    <audio id="correctSound" src="audio/correct.mp3"></audio>
+    <audio id="wrongSound" src="audio/wrong.mp3"></audio>
+    <audio id="completeSound" src="audio/complete.mp3"></audio>
+
+    <!-- JavaScript文件 -->
+    <script src="js/poems.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
