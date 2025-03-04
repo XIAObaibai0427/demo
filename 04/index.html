@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>诗境・人生</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/endings.css">
+</head>
+<body>
+    <!-- 开始界面 -->
+    <div class="screen" id="start-screen">
+        <h1 class="title">诗境・人生</h1>
+        <div class="subtitle">六首诗词，六种人生</div>
+        <div class="poem-intro">
+            <p>《四时田园杂兴》：归隐田园之乐</p>
+            <p>《稚子弄冰》：赤子童心之趣</p>
+            <p>《村晚》：逍遥散人之态</p>
+            <p>《从军行》：铁血将军之志</p>
+            <p>《秋夜将晓出篱门迎凉有感》：忧国志士之心</p>
+            <p>《乡村四月》：勤勉主事之行</p>
+        </div>
+        <button class="btn-start">开始体验</button>
+    </div>
+
+    <!-- 选择界面 -->
+    <div class="screen" id="choice-screen" style="display: none;">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="question-count">1/6</div>
+        </div>
+        
+        <div class="scene">
+            <div class="scene-bg"></div>
+            <div class="question-text"></div>
+        </div>
+
+        <div class="choices">
+            <div class="choice choice-a">
+                <div class="choice-text"></div>
+                <div class="poem-text"></div>
+            </div>
+            <div class="choice choice-b">
+                <div class="choice-text"></div>
+                <div class="poem-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结局界面 -->
+    <div class="screen" id="ending-screen" style="display: none;">
+        <div class="ending-image"></div>
+        <div class="ending-content">
+            <h2 class="ending-title"></h2>
+            <div class="ending-poem">
+                <div class="poem-title"></div>
+                <div class="poem-author"></div>
+                <div class="poem-content"></div>
+                <div class="poem-background"></div>
+            </div>
+            <div class="ending-quote"></div>
+            <button class="btn-restart">重新开始</button>
+        </div>
+    </div>
+
+    <!-- 音频资源 -->
+    <audio id="bgm" loop>
+        <source src="audio/bgm.mp3" type="audio/mp3">
+    </audio>
+    <audio id="clickSound">
+        <source src="audio/click.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/endings.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
