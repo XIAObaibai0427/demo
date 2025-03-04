@@ -18,6 +18,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            transition: opacity 0.5s ease;
         }
 
         .game-container {
@@ -91,6 +92,10 @@
                 opacity: 1;
                 transform: scale(1);
             }
+            50% { 
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
             100% { 
                 opacity: 0;
                 transform: scale(0);
@@ -126,40 +131,6 @@
             background: url('images/card-back.png') center/cover;
         }
 
-        .poems-display {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 250px;
-            padding: 20px;
-            background: rgba(139, 69, 19, 0.9);
-            color: white;
-            border-radius: 10px;
-            font-size: 18px;
-            line-height: 1.6;
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: 10;
-        }
-
-        #leftPoems {
-            left: 20px;
-        }
-
-        #rightPoems {
-            right: 20px;
-        }
-
-        .poem-pair {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .poem-pair:last-child {
-            border-bottom: none;
-        }
-
         .victory-screen {
             display: none;
             position: fixed;
@@ -171,7 +142,7 @@
             border-radius: 15px;
             text-align: center;
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
-            z-index: 1000;
+            z-index: 100;
         }
 
         .victory-screen h2 {
@@ -200,12 +171,173 @@
         .victory-screen button:hover {
             background: #654321;
         }
+
+        /* 返回按钮样式 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .back-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 介绍界面样式 */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .intro-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .slide-container {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .intro-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            object-fit: contain;
+        }
+
+        .intro-slide.active {
+            opacity: 1;
+        }
+
+        .slide-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        .prev-btn, .next-btn {
+            padding: 10px 20px;
+            background: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .prev-btn:hover, .next-btn:hover {
+            background: #654321;
+        }
+
+        .slide-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dot.active {
+            background: #8B4513;
+        }
+
+        .start-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 15px 40px;
+            font-size: 20px;
+            background: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            background: #654321;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-content">
+            <div class="intro-slides">
+                <div class="slide-container">
+                    <img src="images/intro1.png" alt="诗词介绍1" class="intro-slide active">
+                    <img src="images/intro2.png" alt="诗词介绍2" class="intro-slide">
+                    <img src="images/intro3.png" alt="诗词介绍3" class="intro-slide">
+                    <img src="images/intro4.png" alt="诗词介绍4" class="intro-slide">
+                    <img src="images/intro5.png" alt="诗词介绍5" class="intro-slide">
+                    <img src="images/intro6.png" alt="诗词介绍6" class="intro-slide">
+                </div>
+                <div class="slide-controls">
+                    <button class="prev-btn" onclick="prevSlide()">上一页</button>
+                    <div class="slide-dots">
+                        <span class="dot active" onclick="showSlide(0)"></span>
+                        <span class="dot" onclick="showSlide(1)"></span>
+                        <span class="dot" onclick="showSlide(2)"></span>
+                        <span class="dot" onclick="showSlide(3)"></span>
+                        <span class="dot" onclick="showSlide(4)"></span>
+                        <span class="dot" onclick="showSlide(5)"></span>
+                    </div>
+                    <button class="next-btn" onclick="nextSlide()">下一页</button>
+                </div>
+                <button class="start-btn" onclick="startGame()">开始游戏</button>
+            </div>
+        </div>
+    </div>
+
     <div class="game-container">
+        <div class="back-btn" onclick="backToHome()">
+            <img src="../sy/images/back.png" alt="返回">
+        </div>
+
         <div class="game-header">
-            <h1>诗词碰撞</h1>
+            <h1>古诗卡牌消除游戏</h1>
             <div class="game-info">
                 <span class="moves">步数: 0</span>
                 <span class="timer">时间: 0:00</span>
@@ -218,9 +350,6 @@
         
         <div class="cards-container" id="cardsContainer"></div>
         
-        <div class="poems-display" id="leftPoems"></div>
-        <div class="poems-display" id="rightPoems"></div>
-
         <div class="victory-screen" id="victoryScreen">
             <h2>恭喜通关！</h2>
             <p>用时: <span id="finalTime">0:00</span></p>
@@ -240,6 +369,11 @@
         class Game {
             static poems = [
                 {
+                    title: '四时田园杂兴（其三十一）',
+                    author: '范成大',
+                    lines: ["昼出耘田夜绩麻", "村庄儿女各当家", "童孙未解供耕织", "也傍桑阴学种瓜"]
+                },
+                {
                     title: '稚子弄冰',
                     author: '杨万里',
                     lines: ["稚子金盆脱晓冰", "彩丝穿取当银钲", "敲成玉磬穿林响", "忽作玻璃碎地声"]
@@ -248,11 +382,6 @@
                     title: '村晚',
                     author: '雷震',
                     lines: ["草满池塘水满陂", "山衔落日浸寒漪", "牧童归去横牛背", "短笛无腔信口吹"]
-                },
-                {
-                    title: '四时田园杂兴（其三十一）',
-                    author: '范成大',
-                    lines: ["昼出耘田夜绩麻", "村庄儿女各当家", "童孙未解供耕织", "也傍桑阴学种瓜"]
                 },
                 {
                     title: '从军行',
@@ -280,11 +409,6 @@
             static init() {
                 const container = document.getElementById('cardsContainer');
                 container.innerHTML = '';
-                document.getElementById('leftPoems').innerHTML = '';
-                document.getElementById('rightPoems').innerHTML = '';
-                document.getElementById('leftPoems').style.opacity = '0';
-                document.getElementById('rightPoems').style.opacity = '0';
-                
                 this.cards = [];
                 this.flippedCards = [];
                 this.isLocked = false;
@@ -353,38 +477,13 @@
 
                 if (isMatch) {
                     document.getElementById('matchSound').play();
-                    
-                    // 确保诗句按照正确顺序显示（小的ID在前）
-                    const [firstLine, secondLine] = first.data.id < second.data.id ? 
-                        [first.data.content, second.data.content] : 
-                        [second.data.content, first.data.content];
-                    
-                    const poemPair = `
-                        <div class="poem-pair">
-                            <div>${firstLine}</div>
-                            <div>${secondLine}</div>
-                        </div>
-                    `;
-                    
-                    if (Math.min(first.data.id, second.data.id) < 12) {
-                        const leftPoems = document.getElementById('leftPoems');
-                        leftPoems.innerHTML += poemPair;
-                        leftPoems.style.opacity = '1';
-                    } else {
-                        const rightPoems = document.getElementById('rightPoems');
-                        rightPoems.innerHTML += poemPair;
-                        rightPoems.style.opacity = '1';
+                    first.card.classList.add('matched');
+                    second.card.classList.add('matched');
+                    this.matchedPairs++;
+
+                    if (this.matchedPairs === 12) {
+                        setTimeout(() => this.victory(), 600);
                     }
-
-                    setTimeout(() => {
-                        first.card.classList.add('matched');
-                        second.card.classList.add('matched');
-                        this.matchedPairs++;
-
-                        if (this.matchedPairs === 12) {
-                            setTimeout(() => this.victory(), 600);
-                        }
-                    }, 1000);
                 } else {
                     document.getElementById('errorSound').play();
                     setTimeout(() => {
@@ -396,7 +495,7 @@
                 setTimeout(() => {
                     this.flippedCards = [];
                     this.isLocked = false;
-                }, isMatch ? 1500 : 1000);
+                }, isMatch ? 600 : 1000);
             }
 
             static startTimer() {
@@ -450,6 +549,69 @@
             document.getElementById('victoryScreen').style.display = 'none';
             Game.init();
         }
+
+        function backToHome() {
+            // 停止所有音频
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            
+            // 添加淡出效果
+            document.body.style.opacity = 0;
+            
+            // 延迟跳转，等待淡出动画完成
+            setTimeout(() => {
+                window.location.href = '../sy/index.html';
+            }, 500);
+        }
+
+        // 轮播图控制
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.intro-slide');
+        const dots = document.querySelectorAll('.dot');
+
+        function showSlide(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function startGame() {
+            const introScreen = document.getElementById('introScreen');
+            introScreen.classList.add('fade-out');
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                Game.init();
+            }, 500);
+        }
+
+        // 自动播放
+        let slideInterval = setInterval(nextSlide, 5000);
+
+        // 鼠标悬停时暂停自动播放
+        document.querySelector('.intro-content').addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+        });
+
+        // 鼠标离开时恢复自动播放
+        document.querySelector('.intro-content').addEventListener('mouseleave', () => {
+            slideInterval = setInterval(nextSlide, 5000);
+        });
 
         Game.init();
     </script>
